@@ -8,7 +8,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import SellerDashboard from "../pages/Seller/SellerDashboard";
 import SellerBikeList from "../pages/Seller/SellerBikeList";
 import UploadBikeForm from "../pages/Seller/UploadBikeForm";
-import SellerHeader from "../pages/Seller/sellerHeader";
+import SellerHeader from "../pages/Seller/SellerHeader";
 
 function Layout() {
   return (
