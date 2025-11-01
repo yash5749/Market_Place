@@ -133,6 +133,8 @@ const SellerDashboard = () => {
     try {
       await axiosInstance.post("/seller/logout", {}, { withCredentials: true });
       localStorage.removeItem("seller");
+      console.log("✅ logged out succesfully");
+      
       navigate("/login");
     } catch (err) {
       console.error("❌ Logout failed:", err.response?.data || err.message);

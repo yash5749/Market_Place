@@ -9,46 +9,73 @@ export default function SellerLogin() {
   const [loading, setLoading] = useState(false);
 
   // ✅ If already logged in, redirect to dashboard immediately
-  useEffect(() => {
-    const storedSeller = localStorage.getItem("seller");
-    if (storedSeller) {
-      navigate("/seller/dashboard");
-    }
-  }, [navigate]);
+  // useEffect(() => {
+  //   const storedSeller = localStorage.getItem("seller");
+  //   if (storedSeller) {
+  //     navigate("/seller/dashboard");
+  //   }
+  // }, [navigate]);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   console.log("LOGIN SUBMIT FIRED");
+
+  //   setError("");
+  //   setLoading(true);
+
+  //   try {
+  //     console.log("Sending login request:", form);
+  //     const res = await axiosInstance.post("/seller/login", form, {
+  //       withCredentials: true,
+  //     });
+
+  //     console.log("Login response:", res);
+
+  //     const { user } = res.data?.data || {};
+  //     console.log("User from response:", user);
+
+  //     // ✅ store seller data
+  //     localStorage.setItem("seller", JSON.stringify(user));
+
+  //     // ✅ redirect
+  //     navigate("/seller/dashboard");
+  //   } catch (err) {
+  //     console.error("LOGIN ERROR:", err);
+  //     setError(err.response?.data?.message || "Login failed");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log("LOGIN SUBMIT FIRED");
+  e.preventDefault();
+  console.log("LOGIN SUBMIT FIRED");
+  setError("");
+  setLoading(true);
 
-    setError("");
-    setLoading(true);
+  try {
+    console.log("Sending login request:", form);
+    const res = await axiosInstance.post("/seller/login", form);
+    console.log("Login response:", res);
+    
+    const { user, accessToken, refreshToken } = res.data?.data || {};
 
-    try {
-      console.log("Sending login request:", form);
-      const res = await axiosInstance.post("/seller/login", form, {
-        withCredentials: true,
-      });
+    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem("refreshToken", refreshToken);
+    localStorage.setItem("seller", JSON.stringify(user));
 
-      console.log("Login response:", res);
+    navigate("/seller/dashboard");
+  } catch (err) {
+    console.error("LOGIN ERROR:", err);
+    setError(err.response?.data?.message || "Login failed");
+  } finally {
+    setLoading(false);
+  }
+};
 
-      const { user } = res.data?.data || {};
-      console.log("User from response:", user);
-
-      // ✅ store seller data
-      localStorage.setItem("seller", JSON.stringify(user));
-
-      // ✅ redirect
-      navigate("/seller/dashboard");
-    } catch (err) {
-      console.error("LOGIN ERROR:", err);
-      setError(err.response?.data?.message || "Login failed");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-200">
