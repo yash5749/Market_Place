@@ -38,7 +38,7 @@ const register = asyncHandler(async (req, res) => {
   if (!fullName || !email || !phoneNumber || !address || !password) {
     throw new ApiError(400, "All Fields Are Required");
   }
-
+  
   const userAlreadyExist = await Seller.findOne({
     $or: [{ email }, { phoneNumber }],
   });
@@ -68,11 +68,12 @@ const register = asyncHandler(async (req, res) => {
 });
 
 const login = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  let { email, password } = req.body;
   
   if (!email) {
     throw new ApiError(401, "Email is Required");
   }
+  email = email.toLowerCase();
   if (!password) {
     throw new ApiError(401, "Password is Required");
   }

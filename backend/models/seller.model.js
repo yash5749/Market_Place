@@ -9,6 +9,7 @@ const sellerSchema = new Schema(
       required: true,
       maxlength: 50,
       index: true,
+      trim: true
     },
     bikeListed: [
       {
@@ -28,6 +29,8 @@ const sellerSchema = new Schema(
       required: [true, "Please write correct email"],
       unique: true,
       index: true,
+      lowercase: true, 
+      trim: true 
     },
     phoneNumber: {
       type: String,
@@ -42,10 +45,29 @@ const sellerSchema = new Schema(
       },
     },
     address: {
-      addline1: { type: String, required: true },
-      addline2: { type: String },
-      city: { type: String, required: true },
-      state: { type: String, required: true },
+      addline1: { 
+        type: String, 
+        required: true, 
+        lowercase: true, 
+        trim: true 
+      },
+      addline2: { 
+        type: String, 
+        lowercase: true, 
+        trim: true 
+      },
+      city: { 
+        type: String, 
+        required: true, 
+        lowercase: true, 
+        trim: true
+      },
+      state: { 
+        type: String, 
+        required: true, 
+        lowercase: true, 
+        trim: true 
+      },
     },
     password: {
       type: String,
