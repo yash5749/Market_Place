@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import sgMail from "@sendgrid/mail";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { asyncHandler } from "../utils/asynchandler.js";
 import { Bike } from "../models/bike.model.js";
@@ -7,6 +8,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { Seller } from "../models/seller.model.js";
 import { Lead } from "../models/lead.model.js";
 
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const transporter = nodemailer.createTransport({
   service: "gmail", 
   auth: {
@@ -194,7 +196,8 @@ const createLead = asyncHandler(async (req, res) => {
   });
 
   // send email to your team
-  await transporter.sendMail({
+  try {
+    const response =  await sgMail.send({
     from: process.env.EMAIL_USER,
     to: process.env.EMAIL_USER,
     subject: "New Lead Created",
@@ -208,10 +211,16 @@ const createLead = asyncHandler(async (req, res) => {
     CC: ${cc}
     Email: ${email}
     Comments: ${comments}`,
+
   });
 
+  console.log("✅ Email sent:", response[0].statusCode);
+  } catch (error) {
+    console.error("❌ SendGrid error:", error.response?.body || error.message);
+  }
+
   if(email){
-    await transporter.sendMail({
+    await sgMail.send({
     from: process.env.EMAIL_USER,
     to: email,
     subject: "Thank You For Contacting Market Place",
