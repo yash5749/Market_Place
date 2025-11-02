@@ -71,43 +71,116 @@ const BikeSearch = () => {
     document.getElementById("lead_modal").showModal();
   };
 
+  // const handleLeadSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const { name, phoneNumber } = leadData;
+  //   if (!name || !phoneNumber) {
+  //     setLeadError("Name and Phone number are required.");
+  //     if(phoneNumber.length != 10) {
+  //       setLeadError("invalid Phone Number")
+  //       return;
+  //     }
+  //     return;
+  //   }
+
+  //   try {
+  //     setLeadLoading(true);
+  //     setLeadError("");
+  //     const payload = {
+  //       ...leadData,
+  //       intrestedIn: `${selectedBike._id}`,
+  //       brand: `${selectedBike.brand}`,
+  //       bikename: `${selectedBike.bikeName}`,
+  //       model: `${selectedBike.model}`,
+  //       cc: `${selectedBike.cc}`,
+
+  //     };
+  //     const { data } = await axiosInstance.post(
+  //       "/bikes/lead",
+  //       payload
+  //     );
+  //     if (data.success) {
+  //       setLeadSuccess(true);
+  //       setLeadData({ name: "", phoneNumber: "", email: "", comments: "" });
+  //     } else {
+  //       setLeadError("Failed to submit lead. Try again.");
+  //     }
+  //   } catch (err) {
+  //     console.error("Lead creation error:", err);
+  //     setLeadError("Something went wrong while creating lead.");
+  //   } finally {
+  //     setLeadLoading(false);
+  //   }
+  // };
+
   const handleLeadSubmit = async (e) => {
-    e.preventDefault();
-    const { name, phoneNumber } = leadData;
-    if (!name || !phoneNumber) {
-      setLeadError("Name and Phone number are required.");
-      return;
-    }
+  e.preventDefault();
 
-    try {
-      setLeadLoading(true);
-      setLeadError("");
-      const payload = {
-        ...leadData,
-        intrestedIn: `${selectedBike._id}`,
-        brand: `${selectedBike.brand}`,
-        bikename: `${selectedBike.bikeName}`,
-        model: `${selectedBike.model}`,
-        cc: `${selectedBike.cc}`,
+  const { name, phoneNumber, email } = leadData;
 
-      };
-      const { data } = await axiosInstance.post(
-        "/bikes/lead",
-        payload
-      );
-      if (data.success) {
-        setLeadSuccess(true);
-        setLeadData({ name: "", phoneNumber: "", email: "", comments: "" });
-      } else {
-        setLeadError("Failed to submit lead. Try again.");
-      }
-    } catch (err) {
-      console.error("Lead creation error:", err);
-      setLeadError("Something went wrong while creating lead.");
-    } finally {
-      setLeadLoading(false);
+  // Trim to avoid accidental spaces
+  const trimmedName = name.trim();
+  const trimmedPhone = phoneNumber.trim();
+  const trimmedEmail = email.trim();
+
+  // Reset errors
+  setLeadError("");
+
+  // Basic field presence
+  if (!trimmedName) {
+    setLeadError("Name is required.");
+    return;
+  }
+
+  if (!trimmedPhone) {
+    setLeadError("Phone number is required.");
+    return;
+  }
+
+  // ✅ Validate phone: exactly 10 digits
+  const phoneRegex = /^[0-9]{10}$/;
+  if (!phoneRegex.test(trimmedPhone)) {
+    setLeadError("Invalid phone number. Must be 10 digits.");
+    return;
+  }
+
+  // ✅ Validate email if provided
+  if (trimmedEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+    setLeadError("Invalid email format.");
+    return;
+  }
+
+  // If passed all checks → continue
+  try {
+    setLeadLoading(true);
+    const payload = {
+      ...leadData,
+      name: trimmedName,
+      phoneNumber: trimmedPhone,
+      email: trimmedEmail || undefined,
+      interestedIn: selectedBike._id,
+      brand: selectedBike.brand,
+      bikename: selectedBike.bikeName,
+      model: selectedBike.model,
+      cc: selectedBike.cc,
+    };
+
+    const { data } = await axiosInstance.post("/bikes/lead", payload);
+
+    if (data.success) {
+      setLeadSuccess(true);
+      setLeadData({ name: "", phoneNumber: "", email: "", comments: "" });
+    } else {
+      setLeadError("Failed to submit lead. Try again.");
     }
-  };
+  } catch (err) {
+    console.error("Lead creation error:", err);
+    setLeadError("Something went wrong while creating lead.");
+  } finally {
+    setLeadLoading(false);
+  }
+};
+
 
   return (
     <div className="p-6 md:p-10 max-w-7xl mx-auto">

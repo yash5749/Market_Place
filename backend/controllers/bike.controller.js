@@ -174,14 +174,17 @@ const getAllBikes = asyncHandler(async (req, res) => {
 });
 
 const createLead = asyncHandler(async (req, res) => {
-  const { name, phoneNumber, email, intrestedIn, comments,brand,bikename,model,cc } = req.body;
-  if (!name || !phoneNumber || !intrestedIn) {
+  const { name, phoneNumber, email, interestedIn, comments,brand,bikename,model,cc } = req.body;
+  console.log(req.body);
+  
+  
+  if (!name || !phoneNumber || !interestedIn) {
     throw new ApiError(400, "All fields are required");
   }
   const lead = await Lead.create({
     name,
     phoneNumber,
-    intrestedIn,
+    interestedIn,
     brand,
     bikename,
     model,
@@ -198,7 +201,7 @@ const createLead = asyncHandler(async (req, res) => {
     text: `Lead Details:
     Name: ${name}
     Phone: ${phoneNumber}
-    Interested In: ${intrestedIn}
+    Interested In: ${interestedIn}
     Brand :${brand}
     Bike Name: ${bikename}
     Model ${model}
